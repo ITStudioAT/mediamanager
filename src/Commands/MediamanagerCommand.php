@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace Itstudioat\Mediamanager\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class MediamanagerCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'mediamanager';
 
     public $description = 'My command';
 
