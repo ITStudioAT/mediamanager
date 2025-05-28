@@ -2,9 +2,9 @@
 
 namespace Itstudioat\Mediamanager;
 
+use Itstudioat\Mediamanager\Commands\MediamanagerCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Itstudioat\Mediamanager\Commands\MediamanagerCommand;
 
 class MediamanagerServiceProvider extends PackageServiceProvider
 {
