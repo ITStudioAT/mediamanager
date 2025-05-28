@@ -6,13 +6,13 @@ use Illuminate\Console\Command;
 
 class MediamanagerCommand extends Command
 {
-    public $signature = 'mediamanager';
+    public $signature = 'mm';
 
-    public $description = 'My command';
+    public $description = 'Version Of MediaManager';
 
     public function handle(): int
     {
-        $this->comment('All done');
+        $this->comment(config('mediamanager.version'));
 
         return self::SUCCESS;
     }

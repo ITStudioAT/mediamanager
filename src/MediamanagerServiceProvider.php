@@ -17,7 +17,8 @@ class MediamanagerServiceProvider extends PackageServiceProvider
          */
         $package
             ->name('mediamanager')
-            ->hasConfigFile();
+            ->hasConfigFile()
+            ->hasCommand(MediamanagerCommand::class);
     }
 
     public function bootingPackage()

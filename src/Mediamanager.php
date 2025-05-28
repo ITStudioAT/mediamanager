@@ -2,4 +2,6 @@
 
 namespace Itstudioat\Mediamanager;
 
-class Mediamanager {}
+class Mediamanager
+{
+}
