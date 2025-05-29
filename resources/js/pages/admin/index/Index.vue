@@ -21,7 +21,8 @@
 </template>
 
 <script>
-
+import { mapWritableState } from "pinia";
+import { useMediamanagerStore } from "../stores/MediamanagerStore";
 import ItsMenuButton from "../components/ItsMenuButton.vue";
 import ColBox from "../components/ColBox.vue";
 export default {
@@ -29,6 +30,8 @@ export default {
     components: { ItsMenuButton, ColBox },
 
     async beforeMount() {
+        this.mediamanagerStore = useMediamanagerStore();
+        await this.mediamanagerStore.folderStructure();
     },
 
 
@@ -37,6 +40,7 @@ export default {
 
     data() {
         return {
+            mediamanagereStore: null,
             active_element: 'home',
 
         };

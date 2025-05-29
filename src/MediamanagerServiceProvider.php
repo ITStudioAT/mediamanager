@@ -18,6 +18,7 @@ class MediamanagerServiceProvider extends PackageServiceProvider
         $package
             ->name('mediamanager')
             ->hasConfigFile()
+            ->hasRoutes(['api'])
             ->hasCommand(MediamanagerCommand::class);
     }
 
