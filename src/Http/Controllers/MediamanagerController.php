@@ -15,11 +15,9 @@ class MediamanagerController extends Controller
         if (! $path) {
             $path = public_path(config('mediamanager.path'));
         }
-        info($path);
 
         $mediamanagerService = new MediaManagerService();
         $structure = $mediamanagerService->folderStructure($path);
-        info($structure);
 
         return response()->json($structure, 200);
     }

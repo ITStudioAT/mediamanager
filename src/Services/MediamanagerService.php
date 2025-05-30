@@ -3,6 +3,7 @@
 namespace Itstudioat\Mediamanager\src\Services;
 
 use Carbon\Carbon;
+use FilesystemIterator;
 use getID3;
 use Illuminate\Support\Facades\File;
 
@@ -29,11 +30,15 @@ class MediaManagerService
         };
 
         foreach (File::directories($path) as $dirPath) {
+
+            $result = $this->countFilesAndFolders($dirPath);
             $items['folders'][] = [
                 'type' => 'directory',
                 'name' => basename($dirPath),
                 'path' => $normalizePath($dirPath),
                 'size' => null,
+                'folders_count' => $result['folders'],
+                'files_count' => $result['files'],
                 'modified' => Carbon::createFromTimestamp(File::lastModified($dirPath))->toDateTimeString(),
             ];
         }
@@ -84,5 +89,27 @@ class MediaManagerService
         }
 
         return $items;
+    }
+
+    private function countFilesAndFolders(string $path): array
+    {
+        $files = 0;
+        $folders = 0;
+
+        if (! is_dir($path)) {
+            return ['files' => 0, 'folders' => 0];
+        }
+
+        $iterator = new FilesystemIterator($path, FilesystemIterator::SKIP_DOTS);
+
+        foreach ($iterator as $item) {
+            if ($item->isDir()) {
+                $folders++;
+            } elseif ($item->isFile()) {
+                $files++;
+            }
+        }
+
+        return compact('files', 'folders');
     }
 }

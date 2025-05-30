@@ -11,6 +11,29 @@
     --mm-text: #424242;
     --mm-success: #00897B;
     --mm-error: #E53935;
+
+    --mm-bg-color-folder: #FFEA00;
+    --mm-text-color-folder: #37474F;
+    --mm-border-folder: 3px solid #FBC02D;
+    --mm-icon-color-folder: #FBC02D;
+}
+
+
+/* Folder color classes */
+.mm-bg-folder {
+    background-color: var(--mm-bg-color-folder) !important;
+}
+
+.mm-text-folder {
+    color: var(--mm-text-color-folder) !important;
+}
+
+.mm-border-folder {
+    border: var(--mm-border-folder) !important;
+}
+
+.mm-icon-folder {
+    color: var(--mm-icon-color-folder) !important;
 }
 
 /* Background color classes */

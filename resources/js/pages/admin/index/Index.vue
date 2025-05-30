@@ -13,13 +13,17 @@
 
         <v-row class="my-4">
             <v-col>
-                <div class="bg-mm-primary text-h1">MediaManager</div>
+                <Folder :folder="folder" v-for="(folder, i) in folders" @click="" />
             </v-col>
         </v-row>
         <v-row class="my-4">
-            <v-col>
-                {{ folders }}
-            </v-col>
+            <ColBox title="Dateien" icon="mdi-file">
+                <div class="pt-1">
+                    <div v-for="(file, i) in files">
+                        <File :file="file" />
+                    </div>
+                </div>
+            </ColBox>
         </v-row>
         <v-row class="my-4">
             <v-col>
@@ -35,9 +39,11 @@ import { mapWritableState } from "pinia";
 import { useMediamanagerStore } from "../stores/MediamanagerStore";
 import ItsMenuButton from "../components/ItsMenuButton.vue";
 import ColBox from "../components/ColBox.vue";
+import Folder from "../components/Folder.vue";
+import File from "../components/File.vue";
 export default {
 
-    components: { ItsMenuButton, ColBox },
+    components: { ItsMenuButton, ColBox, Folder, File },
 
     async beforeMount() {
         this.mediamanagerStore = useMediamanagerStore();
