@@ -2,13 +2,12 @@
 
 namespace Itstudioat\Mediamanager\src\Services;
 
-use getID3;
 use Carbon\Carbon;
+use getID3;
 use Illuminate\Support\Facades\File;
 
 class MediaManagerService
 {
-
     public function folderStructure($path = null)
     {
 
@@ -17,7 +16,7 @@ class MediaManagerService
             'files' => [],
         ];
 
-        if (!File::exists($path)) {
+        if (! File::exists($path)) {
             return $items;
         }
 
@@ -25,6 +24,7 @@ class MediaManagerService
 
         $normalizePath = function ($fullPath) use ($publicPath) {
             $relative = str_replace('\\', '/', str_replace($publicPath, '', $fullPath));
+
             return preg_replace('#/+#', '/', $relative); // remove double slashes
         };
 
@@ -63,16 +63,16 @@ class MediaManagerService
             /**/
             if (str_starts_with($mimeType, 'video/')) {
                 try {
-                    $getID3 = new getID3;
+                    $getID3 = new getID3();
                     $meta = $getID3->analyze($fullPath);
-                    if (!empty($meta['video']['resolution_x']) && !empty($meta['video']['resolution_y'])) {
+                    if (! empty($meta['video']['resolution_x']) && ! empty($meta['video']['resolution_y'])) {
                         $info['width'] = (int) $meta['video']['resolution_x'];
                         $info['height'] = (int) $meta['video']['resolution_y'];
                     }
-                    if (!empty($meta['playtime_seconds'])) {
+                    if (! empty($meta['playtime_seconds'])) {
                         $info['duration_seconds'] = (float) $meta['playtime_seconds'];
                     }
-                    if (!empty($meta['video']['frame_rate'])) {
+                    if (! empty($meta['video']['frame_rate'])) {
                         $info['frame_rate'] = $meta['video']['frame_rate'];
                     }
                 } catch (\Exception $e) {
@@ -82,7 +82,6 @@ class MediaManagerService
 
             $items['files'][] = $info;
         }
-
 
         return $items;
     }
