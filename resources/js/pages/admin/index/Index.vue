@@ -16,6 +16,16 @@
                 <div class="bg-mm-primary text-h1">MediaManager</div>
             </v-col>
         </v-row>
+        <v-row class="my-4">
+            <v-col>
+                {{ folders }}
+            </v-col>
+        </v-row>
+        <v-row class="my-4">
+            <v-col>
+                {{ files }}
+            </v-col>
+        </v-row>
     </v-container>
 
 </template>
@@ -42,12 +52,11 @@ export default {
         return {
             mediamanagereStore: null,
             active_element: 'home',
-
         };
     },
 
     computed: {
-
+        ...mapWritableState(useMediamanagerStore, ['folders', 'files', 'path']),
     },
 
     methods: {

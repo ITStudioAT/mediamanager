@@ -58,6 +58,11 @@ app.mount('#app');
 ```
 
 
+## Needed Packages
+getID3() by James Heinrich
+composer require james-heinrich/getid3
+
+
 ## Usage
 
 

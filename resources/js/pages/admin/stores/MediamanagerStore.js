@@ -5,6 +5,10 @@ export const useMediamanagerStore = defineStore("MMMediamanagerStore", {
     state: () => {
         return {
             is_loading: 0,
+            path: null,
+            folders: [],
+            files: [],
+
 
         }
     },
@@ -17,7 +21,8 @@ export const useMediamanagerStore = defineStore("MMMediamanagerStore", {
             try {
 
                 const response = await axios.get("/api/mediamanager/folder_structure", { params: { path } });
-                console.log(response);
+                this.folders = response.data?.folders;
+                this.files = response.data?.files;
             } catch (error) {
                 this.redirect(error.response.status, error.response.data.message, 'error');
             } finally {
