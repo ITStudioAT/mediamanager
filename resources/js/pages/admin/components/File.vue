@@ -3,7 +3,9 @@
     <v-card class="mt-2 text-caption px-2 py-1">
 
         <div class="d-flex flex-row align-center ga-1">
-            <v-icon :icon="getFileIcon(file.extension)" size="large" class=" text-medium-emphasis" />
+            <v-icon :icon="getFileIcon(file.extension)"
+                :style="'color:' + getFileColor(file.extension) + ' !important;'" size="large"
+                class=" text-medium-emphasis" />
             <div class="text-caption">{{ file.name }}</div>
         </div>
         <div class="d-flex flex-row align-center ga-2 font-weight-light">
@@ -64,6 +66,32 @@ export default {
             const mins = Math.floor(totalSeconds / 60);
             const secs = totalSeconds % 60;
             return `${mins}:${secs.toString().padStart(2, '0')}`;
+        },
+
+
+        getFileColor(extension) {
+            var color = getComputedStyle(document.documentElement).getPropertyValue('--mm-file-color').trim();
+
+            if (['jpg', 'jpeg', 'png', 'gif', 'heic', 'svg'].includes(extension)) color = getComputedStyle(document.documentElement).getPropertyValue('--mm-image-color').trim();
+
+            if (['mp4', 'mov', 'avi', 'mkv'].includes(extension)) color = getComputedStyle(document.documentElement).getPropertyValue('--mm-video-color').trim();
+
+            if (['pdf'].includes(extension)) color = getComputedStyle(document.documentElement).getPropertyValue('--mm-pdf-color').trim();
+
+
+            if (['doc', 'docx'].includes(extension)) color = getComputedStyle(document.documentElement).getPropertyValue('--mm-word-color').trim();
+
+
+            if (['xls', 'xlsx'].includes(extension)) color = getComputedStyle(document.documentElement).getPropertyValue('--mm-excel-color').trim();
+
+            if (['ppt', 'pptx'].includes(extension)) color = getComputedStyle(document.documentElement).getPropertyValue('--mm-powerpoint-color').trim();
+
+            if (['mdb', 'accdb'].includes(extension)) color = getComputedStyle(document.documentElement).getPropertyValue('--mm-access-color').trim();
+
+            if (['pub'].includes(extension)) color = getComputedStyle(document.documentElement).getPropertyValue('--mm-publisher-color').trim();
+
+
+            return color;
         },
 
 

@@ -17,6 +17,9 @@ class MediaManagerService
             'files' => [],
         ];
 
+        info($path);
+        info(File::exists($path));
+
         if (! File::exists($path)) {
             return $items;
         }

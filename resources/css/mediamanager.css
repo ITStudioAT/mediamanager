@@ -16,6 +16,16 @@
     --mm-text-color-folder: #37474F;
     --mm-border-folder: 3px solid #FBC02D;
     --mm-icon-color-folder: #FBC02D;
+
+    --mm-file-color: #FBC02D;
+    --mm-video-color: #1E88E5;
+    --mm-image-color: #3F51B5;
+    --mm-pdf-color: #E53935;
+    --mm-word-color: #2B579A;
+    --mm-excel-color: #217346;
+    --mm-powerpoint-color: #D24726;
+    --mm-access-color: #A4373A;
+    --mm-publisher-color: #217346;
 }
 
 

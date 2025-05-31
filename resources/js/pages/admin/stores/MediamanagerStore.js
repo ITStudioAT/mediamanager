@@ -5,7 +5,8 @@ export const useMediamanagerStore = defineStore("MMMediamanagerStore", {
     state: () => {
         return {
             is_loading: 0,
-            path: null,
+            current_folder: null,
+            parent_folders: [],
             folders: [],
             files: [],
 

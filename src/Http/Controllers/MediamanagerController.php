@@ -14,6 +14,8 @@ class MediamanagerController extends Controller
         $path = $request->query('path');
         if (! $path) {
             $path = public_path(config('mediamanager.path'));
+        } else {
+            $path = public_path($path);
         }
 
         $mediamanagerService = new MediaManagerService();
