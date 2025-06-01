@@ -9,6 +9,7 @@ export const useMediamanagerStore = defineStore("MMMediamanagerStore", {
             parent_folders: [],
             folders: [],
             files: [],
+            xxx: 'Hello',
 
 
         }

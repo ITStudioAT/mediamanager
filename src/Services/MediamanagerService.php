@@ -115,4 +115,14 @@ class MediaManagerService
 
         return compact('files', 'folders');
     }
+
+    public function makePreviewFiles($files)
+    {
+        $path = public_folder(config('mediamanager.path') . '/');
+        $preview_files = [];
+        foreach ($files as $files) {
+            if (in_array($file['extension'], ['jpeg', 'jpg', 'png', 'gif', 'webp', 'avif'])) {
+            }
+        }
+    }
 }

@@ -31,6 +31,13 @@
                     </div>
                 </div>
             </ColBox>
+            <v-col>
+                <v-card tile flat>
+                    <v-card-text>
+                        Bilder preview
+                    </v-card-text>
+                </v-card>
+            </v-col>
         </v-row>
 
 

@@ -10,7 +10,6 @@ class MediamanagerController extends Controller
 {
     public function folderStructure(Request $request)
     {
-        $from_path = $request->query('from_path');
         $path = $request->query('path');
         if (! $path) {
             $path = public_path(config('mediamanager.path'));
@@ -20,6 +19,7 @@ class MediamanagerController extends Controller
 
         $mediamanagerService = new MediaManagerService();
         $structure = $mediamanagerService->folderStructure($path);
+        $structure['preview_files'] = $mediamanagerService->makePreviewFiles($structure['files']);
 
         return response()->json($structure, 200);
     }
