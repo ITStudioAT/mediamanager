@@ -23,18 +23,33 @@
                 <Folder :folder="folder" v-for="(folder, i) in folders" @click="onFolder(folder)" />
             </v-col>
         </v-row>
+
+        <v-row>
+            <v-col class="d-flex flex-row flex-wrap align-center ga-2">
+                <v-btn color="secondary" v-if="selected_files.length < files.length" @click="onSelectAll"><v-icon
+                        icon="mdi-select-all" /></v-btn>
+                <v-btn color="secondary" v-if="selected_files.length > 0" @click="onSelectOff"><v-icon
+                        icon="mdi-select-off" /></v-btn>
+                <v-btn color="warning" v-if="selected_files.length > 0"><v-icon icon="mdi-delete" /></v-btn>
+            </v-col>
+        </v-row>
         <v-row class="my-4">
             <ColBox :title="current_folder?.name" color="var(--mm-bg-color-folder)" icon="mdi-file">
                 <div class="pt-1">
-                    <div v-for="(file, i) in files">
-                        <File :file="file" @click="" />
-                    </div>
+                    <v-list v-model:selected="selected_files" select-strategy="classic">
+                        <v-list-item v-for="(file, i) in files" :value="file.name">
+                            <File :file="file" />
+                        </v-list-item>
+                    </v-list>
                 </div>
             </ColBox>
             <v-col>
-                <v-card tile flat>
-                    <v-card-text>
-                        Bilder preview
+                <v-card tile flat :loading="is_loading_preview > 0">
+                    <v-card-text v-if="is_loading_preview > 0">
+                        <div class="text-h1">Vorbereiten der Vorschau...</div>
+                    </v-card-text>
+                    <v-card-text class="d-flex flex-row flex-wrap align-end ga-2">
+                        <PreviewItems :preview_files="preview_files" />
                     </v-card-text>
                 </v-card>
             </v-col>
@@ -53,13 +68,15 @@ import ColBox from "../components/ColBox.vue";
 import Folder from "../components/Folder.vue";
 import FolderUp from "../components/FolderUp.vue";
 import File from "../components/File.vue";
+import PreviewItems from "../components/PreviewItems.vue";
 export default {
 
-    components: { ItsMenuButton, ColBox, Folder, File, FolderUp },
+    components: { ItsMenuButton, ColBox, Folder, File, FolderUp, PreviewItems },
 
     async beforeMount() {
         this.mediamanagerStore = useMediamanagerStore();
         await this.mediamanagerStore.folderStructure();
+        this.mediamanagerStore.createPreview();
     },
 
 
@@ -74,13 +91,18 @@ export default {
     },
 
     computed: {
-        ...mapWritableState(useMediamanagerStore, ['folders', 'files', 'current_folder', 'parent_folders']),
+        ...mapWritableState(useMediamanagerStore, ['folders', 'files', 'current_folder', 'parent_folders', 'preview_files', 'is_loading_preview', 'selected_files']),
     },
 
     methods: {
 
+        onSelectOff() {
+            this.selected_files = [];
+        },
 
-
+        onSelectAll() {
+            this.selected_files = this.files.map(file => file.name);
+        },
 
         onFolderUp(parent) {
             const found = this.parent_folders.find((item) => item.path == parent.path);
@@ -91,13 +113,18 @@ export default {
 
             if (this.parent_folders.length >= 1) { this.current_folder = this.parent_folders[this.parent_folders.length - 1]; } else { this.current_folder = null; }
 
+            this.selected_files = [];
             this.mediamanagerStore.folderStructure(this.current_folder?.path);
+            this.mediamanagerStore.createPreview(this.current_folder?.path);
         },
 
         onFolder(folder) {
             this.parent_folders.push(folder);
             this.current_folder = folder;
+
+            this.selected_files = [];
             this.mediamanagerStore.folderStructure(folder?.path);
+            this.mediamanagerStore.createPreview(folder?.path);
         },
         activate(element) {
             console.log(element);

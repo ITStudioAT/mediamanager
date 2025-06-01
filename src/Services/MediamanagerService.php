@@ -6,19 +6,28 @@ use Carbon\Carbon;
 use FilesystemIterator;
 use getID3;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
+
+use Spatie\Image\Enums\ImageDriver;
+
+use Spatie\Image\Image;
+
+/*
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Vips\Driver as VipsDriver;
+*/
 
 class MediaManagerService
 {
     public function folderStructure($path = null)
     {
 
+        info($path);
+
         $items = [
             'folders' => [],
             'files' => [],
         ];
-
-        info($path);
-        info(File::exists($path));
 
         if (! File::exists($path)) {
             return $items;
@@ -33,6 +42,11 @@ class MediaManagerService
         };
 
         foreach (File::directories($path) as $dirPath) {
+
+            // Skip "thumbs" only in the root media folder
+            if ($path === public_path(config('mediamanager.path')) && basename($dirPath) === 'thumbs') {
+                continue;
+            }
 
             $result = $this->countFilesAndFolders($dirPath);
             $items['folders'][] = [
@@ -116,13 +130,45 @@ class MediaManagerService
         return compact('files', 'folders');
     }
 
-    public function makePreviewFiles($files)
+    public function makePreviewFiles($path, $files)
     {
-        $path = public_folder(config('mediamanager.path') . '/');
+        $relative_path = Str::after($path, config('mediamanager.path'));
+        $thumb_path = public_path(config('mediamanager.path') . '/thumbs' . $relative_path);
+
+        if (! File::exists($thumb_path)) {
+            File::makeDirectory($thumb_path, 0755, true);
+        }
+
+        /*
+        $manager = ImageManager::gd();
+*/
         $preview_files = [];
-        foreach ($files as $files) {
+        foreach ($files as $file) {
             if (in_array($file['extension'], ['jpeg', 'jpg', 'png', 'gif', 'webp', 'avif'])) {
+
+                $save_path = $thumb_path . '/' . $file['name'];
+                /*
+
+                $image = $manager->read(public_path($file['path']));
+
+                $image->scale(150, 150);
+                $image->save($save_path);
+
+                */
+
+                if (! file_exists($save_path)) {
+                    $image = Image::useImageDriver(ImageDriver::Gd)->loadFile(public_path($file['path']))->height(150)->save($save_path);
+                }
+
+                /*
+                $image = Image::useImageDriver(ImageDriver::Gd)->loadFile(public_path($file['path']))->height(150)->save($save_path);
+ */
+                $relative_path = config('mediamanager.path') . Str::after($save_path, config('mediamanager.path'));
+                $file['path'] = $relative_path;
+                $preview_files[] = $file;
             }
         }
+
+        return $preview_files;
     }
 }

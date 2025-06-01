@@ -1,35 +1,34 @@
 <template>
 
-    <v-card class="mt-2 text-caption px-2 py-1">
 
-        <div class="d-flex flex-row align-center ga-1">
-            <v-icon :icon="getFileIcon(file.extension)"
-                :style="'color:' + getFileColor(file.extension) + ' !important;'" size="large"
-                class=" text-medium-emphasis" />
-            <div class="text-caption">{{ file.name }}</div>
-        </div>
-        <div class="d-flex flex-row align-center ga-2 font-weight-light">
-            <div>
-                {{ formatFileSize(file.size) }}
-            </div>
 
-            <div class="d-flex flex-row align-center ga-1" v-if="file.width && file.height">
-
-                {{ '[ ' + file.width + ' x ' + file.height + ' ]' }}
-            </div>
-
-            <div class="d-flex flex-row align-center ga-1" v-if="file.duration_seconds">
-                <v-icon icon="mdi-clock-outline" size="small" />
-                {{ formatDuration(file.duration_seconds) }}
-            </div>
-
-            <div class="d-flex flex-row align-center ga-1" v-if="file.modified">
-                <v-icon icon="mdi-update" size="small" />
-                {{ file.modified }}
-            </div>
+    <div class="d-flex flex-row align-center ga-1">
+        <v-icon :icon="getFileIcon(file.extension)" :style="'color:' + getFileColor(file.extension) + ' !important;'"
+            size="large" class=" text-medium-emphasis" />
+        <div class="text-caption">{{ file.name }}</div>
+    </div>
+    <div class="d-flex flex-row align-center ga-2 font-weight-light">
+        <div>
+            {{ formatFileSize(file.size) }}
         </div>
 
-    </v-card>
+        <div class="d-flex flex-row align-center ga-1" v-if="file.width && file.height">
+
+            {{ '[ ' + file.width + ' x ' + file.height + ' ]' }}
+        </div>
+
+        <div class="d-flex flex-row align-center ga-1" v-if="file.duration_seconds">
+            <v-icon icon="mdi-clock-outline" size="small" />
+            {{ formatDuration(file.duration_seconds) }}
+        </div>
+
+        <div class="d-flex flex-row align-center ga-1" v-if="file.modified">
+            <v-icon icon="mdi-update" size="small" />
+            {{ file.modified }}
+        </div>
+    </div>
+
+
 
 </template>
 

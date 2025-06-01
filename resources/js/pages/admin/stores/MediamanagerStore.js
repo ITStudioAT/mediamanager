@@ -5,11 +5,13 @@ export const useMediamanagerStore = defineStore("MMMediamanagerStore", {
     state: () => {
         return {
             is_loading: 0,
+            is_loading_preview: 0,
             current_folder: null,
             parent_folders: [],
             folders: [],
             files: [],
-            xxx: 'Hello',
+            preview_files: [],
+            selected_files: [],
 
 
         }
@@ -29,6 +31,20 @@ export const useMediamanagerStore = defineStore("MMMediamanagerStore", {
                 this.redirect(error.response.status, error.response.data.message, 'error');
             } finally {
                 this.is_loading--;
+            }
+        },
+
+
+        async createPreview(path = null) {
+            this.is_loading_preview++;
+            try {
+
+                const response = await axios.get("/api/mediamanager/create_preview", { params: { path } });
+                this.preview_files = response.data;
+            } catch (error) {
+                this.redirect(error.response.status, error.response.data.message, 'error');
+            } finally {
+                this.is_loading_preview--;
             }
         },
 

@@ -25,3 +25,12 @@ export const mediamanagerDarkTheme = {
         'mm-error': '#EF5350',
     },
 }
+
+export default {
+    install(app) {
+        app.config.globalProperties.$mmThemes = {
+            light: mediamanagerLightTheme,
+            dark: mediamanagerDarkTheme,
+        };
+    }
+};
