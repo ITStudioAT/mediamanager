@@ -1,13 +1,19 @@
 <template>
+    <v-row class="d-flex flex-row flex-wrap ga-2">
 
-    <div v-for="(file, i) in preview_files" :key="i" class="d-flex flex-column align-center hover" style="width: 150px;"
-        @click="onClick(file)">
-        <v-img :src="file.path" class="w-100 h-100" />
-        <div class="text-caption" :class="divClass(file)" :title="file.name"
-            style="display: block; width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
-            {{ file.name }}
+        <div v-for="(file, i) in preview_files" :key="i" class="" @click="onClick(file)">
+            <v-img :src="file.path" :height="file.height" :width="file.width" cover />
+
+
+            <div class="text-caption" :class="divClass(file)" :title="file.name"
+                style="display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;"
+                :style="'width:' + file.width + 'px;'">
+                {{ file.name }}
+            </div>
+
+
         </div>
-    </div>
+    </v-row>
 </template>
 
 

@@ -10,49 +10,48 @@
 
             </v-col>
         </v-row>
-        <v-row>
-            <v-col>
-                FOLDER:
-                {{ current_folder }}
-            </v-col>
-        </v-row>
-        <v-row class="my-4" no-gutters>
+
+        <v-row class="my-4" no-gutters v-if="is_loading == 0">
             <v-col>
                 <FileUpload :path="current_folder?.path" @fileUploadFinished="onFileUploadFinished" />
             </v-col>
         </v-row>
 
-        <v-row no-gutters class="my-4" v-if="parent_folders.length > 0">
+        <v-row no-gutters class="my-4" v-if="parent_folders.length > 0 && is_loading == 0">
             <v-col class="d-flex flex-row flex-wrap align-center ga-2">
                 <FolderUp :parent="parent" v-for="(parent, i) in parent_folders" :is_current="parent == current_folder"
                     @click="onFolderUp(parent)" />
             </v-col>
         </v-row>
 
-        <v-row no-gutters class="my-4">
+        <v-row no-gutters class="my-4" v-if="is_loading == 0">
             <v-col class="d-flex flex-row align-center ga-2 flex-wrap">
                 <Folder :folder="folder" v-for="(folder, i) in folders" @click="onFolder(folder)" />
             </v-col>
         </v-row>
 
-        <v-row no-gutters class="my-4">
+        <v-row no-gutters class="my-4" v-if="is_loading == 0">
             <v-col class="d-flex flex-row flex-wrap align-center ga-2">
                 <v-btn color="secondary" v-if="selected_files.length < files.length" @click="onSelectAll"><v-icon
                         icon="mdi-select-all" /></v-btn>
                 <v-btn color="secondary" v-if="selected_files.length > 0" @click="onSelectOff"><v-icon
                         icon="mdi-select-off" /></v-btn>
-                <v-btn color="secondary" v-if="selected_files.length > 0" @click="onSelectOff"><v-icon
+                <v-btn color="secondary" v-if="selected_files.length == 1" @click="onSelectOff"><v-icon
                         icon="mdi-rename" /></v-btn>
                 <v-btn color="warning" v-if="selected_files.length > 0 && delete_level == 0"
                     @click="delete_level = 1"><v-icon icon="mdi-delete" /></v-btn>
+                <v-btn color="success" v-if="selected_files.length > 0 && delete_level == 1"
+                    @click="delete_level = 0"><v-icon icon="mdi-delete-off" /></v-btn>
                 <v-btn color="error" v-if="selected_files.length > 0 && delete_level == 1" @click="destroyFiles"><v-icon
                         icon="mdi-delete" /></v-btn>
+
             </v-col>
         </v-row>
         <v-row no-gutters class="my-4">
-            <ColBox :title="current_folder?.name" color="var(--mm-bg-color-folder)" icon="mdi-file">
+            <ColBox :title="current_folder?.name" :subtitle="files.length + ' Dateien'"
+                color="var(--mm-bg-color-folder)" icon="mdi-file">
                 <div class="pt-1">
-                    <v-list v-model:selected="selected_files" select-strategy="classic">
+                    <v-list v-model:selected="selected_files" select-strategy="classic" :disabled="is_loading > 0">
                         <v-list-item v-for="(file, i) in files" :value="file.name">
                             <File :file="file" />
                         </v-list-item>
@@ -61,8 +60,9 @@
             </ColBox>
             <v-col>
                 <v-card tile flat :loading="is_loading_preview > 0">
-                    <v-card-text v-if="is_loading_preview > 0">
-                        <div class="text-h1">Vorbereiten der Vorschau...</div>
+                    <v-card-text class="d-flex flex-row align-center justify-center" style="min-height: 300px;"
+                        v-if="is_loading_preview > 0">
+                        <div class="text-h6">Vorbereiten der Vorschau...</div>
                     </v-card-text>
                     <v-card-text class="d-flex flex-row flex-wrap align-end ga-2">
                         <PreviewItems :preview_files="preview_files" />
@@ -113,7 +113,7 @@ export default {
     },
 
     computed: {
-        ...mapWritableState(useMediamanagerStore, ['folders', 'files', 'current_folder', 'parent_folders', 'preview_files', 'is_loading_preview', 'selected_files']),
+        ...mapWritableState(useMediamanagerStore, ['folders', 'files', 'current_folder', 'parent_folders', 'preview_files', 'is_loading_preview', 'is_loading', 'selected_files']),
     },
 
     methods: {
@@ -155,6 +155,7 @@ export default {
             if (this.parent_folders.length >= 1) { this.current_folder = this.parent_folders[this.parent_folders.length - 1]; } else { this.current_folder = null; }
 
             this.selected_files = [];
+            this.preview_files = [];
             this.mediamanagerStore.folderStructure(this.current_folder?.path);
             this.mediamanagerStore.createPreview(this.current_folder?.path);
         },
@@ -164,6 +165,7 @@ export default {
             this.current_folder = folder;
 
             this.selected_files = [];
+            this.preview_files = [];
             this.mediamanagerStore.folderStructure(folder?.path);
             this.mediamanagerStore.createPreview(folder?.path);
         },

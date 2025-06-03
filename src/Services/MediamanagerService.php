@@ -59,7 +59,7 @@ class MediaManagerService
         }
 
         foreach (File::files($path) as $file) {
-            $fullPath = $file->getPathname();
+            $fullPath = strtolower($file->getPathname());
             $mimeType = File::mimeType($fullPath);
             $info = [
                 'type' => 'file',
@@ -139,17 +139,39 @@ class MediaManagerService
 
         $preview_files = [];
         foreach ($files as $file) {
-            if (in_array($file['extension'], ['jpeg', 'jpg', 'png', 'gif', 'webp', 'avif'])) {
+            if (in_array(strtolower($file['extension']), ['jpeg', 'jpg', 'png', 'gif', 'webp', 'avif'])) {
 
-                $save_path = $thumb_path . '/' . $file['name'];
+                $save_path = $thumb_path . '/' . strtolower($file['name']);
 
                 if (! file_exists($save_path)) {
                     $image = Image::useImageDriver(ImageDriver::Gd)->loadFile(public_path($file['path']))->height(150)->save($save_path);
                 }
 
                 $relative_path = config('mediamanager.path') . Str::after($save_path, config('mediamanager.path'));
-                $file['path'] = $relative_path;
-                $preview_files[] = $file;
+
+                $thumb_file = new \Symfony\Component\HttpFoundation\File\File($save_path);
+
+                $fullPath = $thumb_file->getPathname();
+                $mimeType = File::mimeType($fullPath);
+                $info = [
+                    'type' => 'file',
+                    'name' => $thumb_file->getFilename(),
+                    'path' => $relative_path,
+                    'size' => $thumb_file->getSize(),
+                    'modified' => Carbon::createFromTimestamp($thumb_file->getMTime())->toDateTimeString(),
+                    'extension' => strtolower($thumb_file->getExtension()),
+                    'mime_type' => $mimeType,
+                ];
+
+                // Image resolution
+                if (str_starts_with($mimeType, 'image/')) {
+                    if ($dimensions = @getimagesize($fullPath)) {
+                        $info['width'] = $dimensions[0];
+                        $info['height'] = $dimensions[1];
+                    }
+                }
+
+                $preview_files[] = $info;
             }
         }
 
@@ -167,10 +189,17 @@ class MediaManagerService
         // upload_path, Unterverzeichnis in storage/app/public, wenn nicht vorhanden wird es erzeugt
         // $new_name, Filename. Wenn nicht angegeben wird das Original verwendet
 
-        $filename = $request->header('Upload-Name');
+        $part_name = 'temp.part';
+        $filename = strtolower($request->header('Upload-Name'));
+        /*
+        $part_name = $filename . ".part";
+        if (file_exists(public_path($path . '/' . 'temp.part'))) rename(public_path($path . '/' . 'temp.part'), public_path($path . '/' . $part_name));
+        */
+
         $offset = (int) $request->header('Upload-Offset');
 
-        $target = public_path("$path/temp.part");
+        $target = public_path("$path/$part_name");
+        //info($part_name);
         /*
         $currentSize = file_exists($target) ? filesize($target) : 0;
 
@@ -210,7 +239,7 @@ class MediaManagerService
 
             $finalName = $name . '.' . $ext;
 
-            $finalPath = public_path("$path/$finalName");
+            $finalPath = strtolower(public_path("$path/$finalName"));
 
             // rename() kann scheitern, also Fehler prüfen
             if (! rename($target, $finalPath)) {

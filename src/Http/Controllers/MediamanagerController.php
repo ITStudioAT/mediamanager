@@ -5,6 +5,8 @@ namespace Itstudioat\Mediamanager\src\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Itstudioat\Mediamanager\src\Services\MediamanagerService;
+use Pion\Laravel\ChunkUpload\Handler\HandlerFactory;
+use Pion\Laravel\ChunkUpload\Receiver\FileReceiver;
 
 class MediamanagerController extends Controller
 {
@@ -13,16 +15,56 @@ class MediamanagerController extends Controller
         return response()->json(csrf_token(), 200);
     }
 
+    public function upload(Request $request)
+    {
+        $receiver = new FileReceiver('file', $request, HandlerFactory::classFromRequest($request));
+
+        if (! $receiver->isUploaded()) {
+            return response()->json(['error' => 'Upload failed'], 400);
+        }
+
+        $save = $receiver->receive();
+
+        if ($save->isFinished()) {
+            $file = $save->getFile();
+            $filename = $file->getClientOriginalName();
+            $path = public_path('storage/media/uploads');
+            $file->move($path, $filename);
+
+            return response()->json([
+                'success' => true,
+                'filename' => $filename,
+                'path' => $path,
+            ]);
+        }
+
+        // Return progress
+        $handler = $save->handler();
+
+        return response()->json([
+            'done' => $handler->getPercentageDone(),
+        ]);
+    }
+
     public function uploadPost(Request $request)
     {
+        /*
+        info($request);
+        $files = $request->files;
+        info($request->query('files'));
+        info($request->query('file'));
+        info($request->file);
+        info(count($files));
+        */
         $path = $request->query('path');
         if (! $path || $path == 'undefined') {
             $path = config('mediamanager.path');
         }
+
         $mediamanagerService = new MediamanagerService();
         $mediamanagerService->upload($request, $path);
 
-        return response('', 200)->header('Upload-Offset', 0);
+        return response('', 200)->header('Upload-Offset', 0)->header('Part-Name', 'temp1.part');
     }
 
     public function uploadPatch(Request $request)

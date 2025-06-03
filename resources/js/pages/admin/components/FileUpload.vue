@@ -3,10 +3,10 @@
     <v-card class="mm-text-folder mm-border-folder" width="300">
         <v-card-text>
             <file-pond class="w-100" name="file" ref="pond" label-idle="<strong>⬆️ Dateien oder Klick ⬆️</strong>"
-                allowReplace chunkUploads="true" chunkForce="true" allowRemove=false allowRevert="false"
-                allow-multiple="true" labelFileProcessingComplete="Upload durchgeführt" :files="upload_files"
-                :chunkUploads="true" :chunkForce="true" :chunkSize="5000000" credits="false" :server="{
-                    url: '/api/mediamanager/upload?path=' + path + '&filename=' + encodeURIComponent(fileName),
+                allowReplace chunkForce="true" allowRemove=false allowRevert="false" allow-multiple="true"
+                labelFileProcessingComplete="Upload durchgeführt" :files="upload_files" :chunkUploads="true"
+                :chunkForce="true" :chunkSize="5000000" :max-parallel-uploads="1" credits="false" :server="{
+                    url: '/api/mediamanager/upload_filepond?path=' + (path ? path : null),
                     method: 'POST',
                     timeout: 7000,
                     headers: { 'X-CSRF-TOKEN': csrf },

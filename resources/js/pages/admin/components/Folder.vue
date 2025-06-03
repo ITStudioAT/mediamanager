@@ -4,7 +4,7 @@
         <v-card-text class="text-caption d-flex flex-column align-center justify-center h-100 w-100">
             <div>{{ folder.name }}</div>
             <v-icon class="mm-icon-folder" icon="mdi-folder" size="large" />
-            <div>{{ folder.folders_count }} Ordner, {{ folder.files_count }} Dateien</div>
+            <div>{{ folder.folders_count }} Ord., {{ folder.files_count }} Dat.</div>
         </v-card-text>
     </v-card>
 

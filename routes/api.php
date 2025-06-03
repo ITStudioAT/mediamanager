@@ -8,10 +8,14 @@ Route::prefix('api/mediamanager')->middleware(['web', 'throttle:global', 'thrott
     Route::get('/folder_structure',  [MediamanagerController::class, 'folderStructure']);
     Route::get('/create_preview',  [MediamanagerController::class, 'createPreview']);
     Route::get('/csrf',  [MediamanagerController::class, 'csrf']);
-    Route::post('/upload',  [MediamanagerController::class, 'uploadPost']);
-    Route::patch('/upload',  [MediamanagerController::class, 'uploadPatch']);
-    Route::delete('/upload', [MediaController::class, 'uploadDelete']);
-    Route::get('/upload', [MediaController::class, 'uploadGet']);
+    /*
+    Route::post('/upload',  [MediamanagerController::class, 'upload']);
+*/
+    Route::post('/upload_filepond',  [MediamanagerController::class, 'uploadPost']);
+    Route::patch('/upload_filepond',  [MediamanagerController::class, 'uploadPatch']);
+    Route::delete('/upload_filepond', [MediaController::class, 'uploadDelete']);
+    Route::get('/upload_filepond', [MediaController::class, 'uploadGet']);
+
 
     Route::post('/destroy_files',  [MediamanagerController::class, 'destroyFiles']);
 });

@@ -6,6 +6,9 @@
                 <v-icon :icon="icon" class="mr-2" size="x-small" v-if="icon" />
                 {{ title }}
             </v-card-title>
+            <v-card-subtitle v-if="subtitle">
+                {{ subtitle }}
+            </v-card-subtitle>
             <v-card-text class="bg-secondary">
                 <slot />
             </v-card-text>
