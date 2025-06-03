@@ -60,10 +60,25 @@ app.mount('#app');
 
 ## Needed Packages
 ### getID3() by James Heinrich
+```bash
 composer require james-heinrich/getid3
+```
 
 ### Spatie Image
+```bash
 composer require spatie/image
+```
+
+## Vue Filepond
+```bash
+npm install vue-filepond filepond
+npm install filepond-plugin-file-validate-type
+npm install filepond-plugin-image-preview
+```
+
+
+
+
 
 
 ## Usage

@@ -20,6 +20,19 @@ export const useMediamanagerStore = defineStore("MMMediamanagerStore", {
     actions: {
 
 
+        async destroyFiles(files, path = null) {
+            this.is_loading++;
+            try {
+
+                const response = await axios.post("/api/mediamanager/destroy_files", { files, path });
+            } catch (error) {
+                this.redirect(error.response.status, error.response.data.message, 'error');
+            } finally {
+                this.is_loading--;
+            }
+        },
+
+
         async folderStructure(path = null) {
             this.is_loading++;
             try {

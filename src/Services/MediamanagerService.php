@@ -22,8 +22,6 @@ class MediaManagerService
     public function folderStructure($path = null)
     {
 
-        info($path);
-
         $items = [
             'folders' => [],
             'files' => [],
@@ -44,7 +42,7 @@ class MediaManagerService
         foreach (File::directories($path) as $dirPath) {
 
             // Skip "thumbs" only in the root media folder
-            if ($path === public_path(config('mediamanager.path')) && basename($dirPath) === 'thumbs') {
+            if (basename($dirPath) === '_thumbs') {
                 continue;
             }
 
@@ -69,7 +67,7 @@ class MediaManagerService
                 'path' => $normalizePath($fullPath),
                 'size' => $file->getSize(),
                 'modified' => Carbon::createFromTimestamp($file->getMTime())->toDateTimeString(),
-                'extension' => $file->getExtension(),
+                'extension' => strtolower($file->getExtension()),
                 'mime_type' => $mimeType,
             ];
 
@@ -133,36 +131,22 @@ class MediaManagerService
     public function makePreviewFiles($path, $files)
     {
         $relative_path = Str::after($path, config('mediamanager.path'));
-        $thumb_path = public_path(config('mediamanager.path') . '/thumbs' . $relative_path);
+        $thumb_path = public_path(config('mediamanager.path')  . $relative_path . '/_thumbs');
 
         if (! File::exists($thumb_path)) {
             File::makeDirectory($thumb_path, 0755, true);
         }
 
-        /*
-        $manager = ImageManager::gd();
-*/
         $preview_files = [];
         foreach ($files as $file) {
             if (in_array($file['extension'], ['jpeg', 'jpg', 'png', 'gif', 'webp', 'avif'])) {
 
                 $save_path = $thumb_path . '/' . $file['name'];
-                /*
-
-                $image = $manager->read(public_path($file['path']));
-
-                $image->scale(150, 150);
-                $image->save($save_path);
-
-                */
 
                 if (! file_exists($save_path)) {
                     $image = Image::useImageDriver(ImageDriver::Gd)->loadFile(public_path($file['path']))->height(150)->save($save_path);
                 }
 
-                /*
-                $image = Image::useImageDriver(ImageDriver::Gd)->loadFile(public_path($file['path']))->height(150)->save($save_path);
- */
                 $relative_path = config('mediamanager.path') . Str::after($save_path, config('mediamanager.path'));
                 $file['path'] = $relative_path;
                 $preview_files[] = $file;
@@ -170,5 +154,135 @@ class MediaManagerService
         }
 
         return $preview_files;
+    }
+
+    public function upload($request, $path = '')
+    {
+        file_put_contents(public_path("$path/temp.part"), '');
+    }
+
+    public function uploadPatch($request, $path = '', $new_name = null, $fit = null)
+    {
+        // Parameter:
+        // upload_path, Unterverzeichnis in storage/app/public, wenn nicht vorhanden wird es erzeugt
+        // $new_name, Filename. Wenn nicht angegeben wird das Original verwendet
+
+        $filename = $request->header('Upload-Name');
+        $offset = (int) $request->header('Upload-Offset');
+
+        $target = public_path("$path/temp.part");
+        /*
+        $currentSize = file_exists($target) ? filesize($target) : 0;
+
+        info("currentSize: " . $currentSize);
+        info("offset: " . $offset);
+
+        if ($currentSize !== $offset) {
+            return response('Wrong offset', 409);
+        }
+*/
+
+        // Chunk anhängen
+        file_put_contents($target, $request->getContent(), FILE_APPEND);
+
+        $newSize = filesize($target);
+        $expectedSize = (int) $request->header('Upload-Length');
+        /*
+        info("newSize: " . $newSize);
+        info("expectedSize: " . $expectedSize);
+*/
+
+        // Wenn Upload fertig
+        if ($expectedSize && $newSize === $expectedSize) {
+            /*
+            info("OK!");
+            info("expectedSize: " . $expectedSize);
+            info("newSize: " . $newSize);
+            */
+
+            $ext = pathinfo($filename, PATHINFO_EXTENSION);
+            $name = pathinfo($filename, PATHINFO_FILENAME);
+
+            // Fallback für fehlende Extension
+            if (! $ext) {
+                $ext = 'bin'; // oder jpg, png, etc.
+            }
+
+            $finalName = $name . '.' . $ext;
+
+            $finalPath = public_path("$path/$finalName");
+
+            // rename() kann scheitern, also Fehler prüfen
+            if (! rename($target, $finalPath)) {
+                info("Rename failed: $target → $finalPath");
+            }
+
+            /*
+            info("path: " . $path);
+            info("finalName: " . $finalName);
+            */
+
+            $fullPath = public_path($path . '/' . $finalName);
+
+            // 2. SplFileInfo erzeugen
+            $file = new \SplFileInfo($fullPath);
+
+            // 3. Dateiinformationen extrahieren
+            $normalizePath = fn ($path) => str_replace(public_path(), '', $path);
+
+            $info = [
+                'type' => 'file',
+                'name' => $file->getFilename(),
+                'path' => $normalizePath($fullPath),
+                'size' => $file->getSize(),
+                'modified' => Carbon::createFromTimestamp($file->getMTime())->toDateTimeString(),
+                'extension' => strtolower($file->getExtension()),
+                'mime_type' => File::mimeType($fullPath),
+            ];
+
+            $files = [];
+            $files[] = $info;
+
+            $this->makePreviewFiles($path, $files);
+        }
+
+        return $newSize;
+    }
+
+    public function uploadDelete($request, $path)
+    {
+        $filename = $request->header('Upload-Name');
+
+        $file = public_path("$path/temp.part");
+
+        if (file_exists($file)) {
+            unlink($file);
+        }
+    }
+
+    public function uploadGet($request, $path)
+    {
+        $filename = $request->header('Upload-Name');
+        $file = public_path("$path/temp.part");
+
+        $offset = file_exists($file) ? filesize($file) : 0;
+
+        return $offset;
+    }
+
+    public function destroyFiles($path, $files)
+    {
+        foreach ($files as $file) {
+            $file_path = public_path($path . '/' . $file);
+            $thumb_path = public_path($path . '/_thumbs/' . $file);
+
+            if (File::exists($file_path)) {
+                File::delete($file_path);
+            }
+
+            if (File::exists($thumb_path)) {
+                File::delete($thumb_path);
+            }
+        }
     }
 }

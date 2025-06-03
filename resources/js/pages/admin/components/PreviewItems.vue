@@ -1,7 +1,7 @@
 <template>
 
-    <div v-for="(file, i) in preview_files" :key="i" class="d-flex flex-column align-center hover"
-        style="max-width: 150px;" @click="onClick(file)">
+    <div v-for="(file, i) in preview_files" :key="i" class="d-flex flex-column align-center hover" style="width: 150px;"
+        @click="onClick(file)">
         <v-img :src="file.path" class="w-100 h-100" />
         <div class="text-caption" :class="divClass(file)" :title="file.name"
             style="display: block; width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
