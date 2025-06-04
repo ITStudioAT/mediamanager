@@ -11,8 +11,10 @@ use Illuminate\Support\Str;
 use Spatie\Image\Enums\ImageDriver;
 
 use Spatie\Image\Image;
+use ZipArchive;
 
 /*
+
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Vips\Driver as VipsDriver;
 */
@@ -312,5 +314,28 @@ class MediaManagerService
         if (file_exists($from_thumbs)) {
             rename($from_thumbs, $to_thumbs);
         }
+    }
+
+    public function downloadFolder($folder)
+    {
+        $folderPath = public_path($folder); // z. B. storage/app/public/myfolder
+
+        if (! is_dir(storage_path('app/public/zip/'))) {
+            mkdir(storage_path('app/public/zip/'), 0755, true);
+        }
+
+        $zipPath = storage_path('app/public/zip/' . basename($folder) . '.zip');
+
+        $zip = new ZipArchive();
+        if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true) {
+            $files = File::allFiles($folderPath);
+            foreach ($files as $file) {
+                $relativeName = ltrim(str_replace($folderPath, '', $file->getPathname()), '/\\');
+                $zip->addFile($file->getRealPath(), $relativeName);
+            }
+            $zip->close();
+        }
+
+        return $zipPath;
     }
 }

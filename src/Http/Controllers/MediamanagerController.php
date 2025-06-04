@@ -156,6 +156,19 @@ class MediamanagerController extends Controller
         return response()->download(public_path($request->query('file')), basename($request->query('file')));
     }
 
+    public function downloadFolder(Request $request)
+    {
+        $folder = $request->query('folder');
+        if (! $folder || $folder == 'NULL') {
+            $folder = config('mediamanager.path');
+        }
+
+        $mediamanagerService = new MediamanagerService();
+        $zipPath = $mediamanagerService->downloadFolder($folder);
+
+        return response()->download($zipPath)->deleteFileAfterSend(true);
+    }
+
     public function saveFilename(SaveFilenameRequest $request)
     {
         $validated = $request->validated()['data'];

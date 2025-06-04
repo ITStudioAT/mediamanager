@@ -18,9 +18,6 @@
                 <FileUpload :path="current_folder?.path" @fileUploadFinished="onFileUploadFinished" />
             </v-col>
         </v-row>
-        <v-row>
-            {{ current_folder }}
-        </v-row>
 
         <!-- FOLDER-UP -->
         <v-row no-gutters class="my-4" v-if="parent_folders.length > 0 && is_loading == 0">
@@ -33,7 +30,8 @@
         <!-- FOLDERS -->
         <v-row no-gutters class="my-4" v-if="is_loading == 0">
             <v-col class="d-flex flex-row align-center ga-2 flex-wrap">
-                <Folder :folder="folder" v-for="(folder, i) in folders" @click="onFolder(folder)" />
+                <Folder :folder="folder" v-for="(folder, i) in folders" @onFolder="onFolder(folder)"
+                    @onDownloadFolder="onDownloadFolder(folder)" />
             </v-col>
         </v-row>
 
@@ -182,6 +180,11 @@ export default {
                 extension: extension,
             }
             this.is_rename = true;
+        },
+
+        async onDownloadFolder(folder) {
+            console.log(folder);
+
         },
 
         async onSaveFilename(data) {
