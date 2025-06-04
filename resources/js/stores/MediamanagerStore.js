@@ -43,6 +43,19 @@ export const useMediamanagerStore = defineStore("MMMediamanagerStore", {
             }
         },
 
+        async destroyFolder(path) {
+            this.is_loading++;
+            console.log(path);
+            try {
+
+                const response = await axios.post("/api/mediamanager/destroy_folder", { path });
+            } catch (error) {
+                this.redirect(error.response.status, error.response.data.message, 'error');
+            } finally {
+                this.is_loading--;
+            }
+        },
+
 
         async folderStructure(path = null) {
             this.is_loading++;

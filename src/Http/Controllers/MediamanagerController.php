@@ -175,4 +175,17 @@ class MediamanagerController extends Controller
         $mediamanagerService = new MediaManagerService();
         $mediamanagerService->rename($validated['path'], $validated['path'], $validated['current_filename'], $validated['filename'] . '.' . $validated['extension']);
     }
+
+    public function destroyFolder(Request $request)
+    {
+
+        $path = $request->path;
+
+        if (! $path || $path == 'NULL') {
+            $path = config('mediamanager.path');
+        }
+
+        $mediamanagerService = new MediaManagerService();
+        $mediamanagerService->destroyFolder($path);
+    }
 }

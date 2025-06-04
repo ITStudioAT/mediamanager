@@ -20,4 +20,5 @@ Route::prefix('api/mediamanager')->middleware(['web', 'throttle:global', 'thrott
 
     Route::post('/destroy_files',  [MediamanagerController::class, 'destroyFiles']);
     Route::post('/save_filename',  [MediamanagerController::class, 'saveFilename']);
+    Route::post('/destroy_folder',  [MediamanagerController::class, 'destroyFolder']);
 });

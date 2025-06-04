@@ -31,7 +31,7 @@
         <v-row no-gutters class="my-4" v-if="is_loading == 0">
             <v-col class="d-flex flex-row align-center ga-2 flex-wrap">
                 <Folder :folder="folder" v-for="(folder, i) in folders" @onFolder="onFolder(folder)"
-                    @onDownloadFolder="onDownloadFolder(folder)" />
+                    @onDestroyFolder="onDestroyFolder(folder)" />
             </v-col>
         </v-row>
 
@@ -182,11 +182,6 @@ export default {
             this.is_rename = true;
         },
 
-        async onDownloadFolder(folder) {
-            console.log(folder);
-
-        },
-
         async onSaveFilename(data) {
             this.is_valid = false; await this.$refs.form.validate(); if (!this.is_valid) return;
             this.is_rename = false;
@@ -203,6 +198,15 @@ export default {
             this.mediamanagerStore.folderStructure(this.current_folder?.path);
             this.mediamanagerStore.createPreview(this.current_folder?.path);
             this.selected_files = [];
+        },
+
+        async onDestroyFolder(folder) {
+            this.selected_files = [];
+            this.preview_files = [];
+            this.mediamanagerStore.destroyFolder(folder.path);
+            this.mediamanagerStore.folderStructure(this.current_folder?.path);
+            this.mediamanagerStore.createPreview(this.current_folder?.path);
+
         },
 
         onFileUploadFinished(response) {

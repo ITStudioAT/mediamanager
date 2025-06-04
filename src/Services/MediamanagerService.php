@@ -289,6 +289,15 @@ class MediaManagerService
         }
     }
 
+    public function destroyFolder($path)
+    {
+        $folder_path = public_path($path);
+
+        if (File::exists($folder_path)) {
+            File::deleteDirectory($folder_path);
+        }
+    }
+
     public function rename($path, $new_path, $current_filename, $new_filename)
     {
         if (! $path || $path == 'NULL') {

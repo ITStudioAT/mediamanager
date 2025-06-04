@@ -19,7 +19,8 @@
             <v-btn size="small" color="success" v-if="delete_level == 1" @click="delete_level = 0"><v-icon
                     icon="mdi-delete-off" /></v-btn>
             <!-- Löschen durchführen -->
-            <v-btn size="small" color="error" v-if="delete_level == 1"><v-icon icon="mdi-delete" /></v-btn>
+            <v-btn size="small" color="error" v-if="delete_level == 1" @click="destroyFolder"><v-icon
+                    icon="mdi-delete" /></v-btn>
         </div>
     </div>
 
@@ -28,7 +29,7 @@
 
 <script>
 export default {
-    emits: ['onFolder', 'onDownloadFolder'],
+    emits: ['onFolder'],
     props: ['folder'],
 
     data() {
@@ -39,6 +40,10 @@ export default {
     },
 
     methods: {
+        destroyFolder() {
+            this.delete_level = 0;
+            this.$emit('onDestroyFolder');
+        }
 
     }
 
