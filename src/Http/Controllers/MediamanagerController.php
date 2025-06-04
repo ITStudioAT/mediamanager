@@ -4,6 +4,7 @@ namespace Itstudioat\Mediamanager\src\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Itstudioat\Mediamanager\src\Http\Requests\SaveFilenameRequest;
 use Itstudioat\Mediamanager\src\Services\MediamanagerService;
 use Pion\Laravel\ChunkUpload\Handler\HandlerFactory;
 use Pion\Laravel\ChunkUpload\Receiver\FileReceiver;
@@ -152,7 +153,12 @@ class MediamanagerController extends Controller
 
     public function download(Request $request)
     {
-
         return response()->download(public_path($request->query('file')), basename($request->query('file')));
+    }
+
+    public function saveFilename(SaveFilenameRequest $request)
+    {
+        $validated = $request->validated();
+        info($validated);
     }
 }

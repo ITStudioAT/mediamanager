@@ -8,7 +8,7 @@
                     style="display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
                     {{ file.name }}
                 </div>
-                <div class="d-flex flex-row flex-wrap align-center">
+                <div class="d-flex flex-row flex-wrap align-center ga-1">
                     <v-btn size="small" @click="showFullImage(file)"><v-icon icon="mdi-magnify-expand" /></v-btn>
                     <v-btn size="small" :href="'/mediamanager/download?file=' + file.original_path"
                         target="_blank"><v-icon icon="mdi-download" /></v-btn>
@@ -25,9 +25,7 @@
             <div class="d-flex justify-center">
                 <div class="text-center bg-white text-body-2 pa-1"> {{ full_image.name }}</div>
             </div>
-
         </div>
-
     </v-dialog>
 
 </template>
@@ -35,7 +33,7 @@
 
 <script>
 import { mapWritableState } from "pinia";
-import { useMediamanagerStore } from "../stores/MediamanagerStore";
+import { useMediamanagerStore } from "../../../stores/MediamanagerStore";
 
 export default {
     props: ['preview_files'],
