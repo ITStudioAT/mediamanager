@@ -7,7 +7,7 @@
             size="large" class=" text-medium-emphasis" />
         <div class="text-caption">{{ file.name }}</div>
     </div>
-    <div class="d-flex flex-row align-center ga-2 font-weight-light">
+    <div class="d-flex flex-row flex-wrap align-center ga-2 font-weight-light">
         <div>
             {{ formatFileSize(file.size) }}
         </div>

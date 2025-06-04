@@ -6,7 +6,7 @@
                 allowReplace chunkForce="true" allowRemove=false allowRevert="false" allow-multiple="true"
                 labelFileProcessingComplete="Upload durchgeführt" :files="upload_files" :chunkUploads="true"
                 :chunkForce="true" :chunkSize="5000000" :max-parallel-uploads="1" credits="false" :server="{
-                    url: '/api/mediamanager/upload_filepond?path=' + (path ? path : null),
+                    url: '/api/mediamanager/upload_filepond?path=' + (path ? path : ''),
                     method: 'POST',
                     timeout: 7000,
                     headers: { 'X-CSRF-TOKEN': csrf },

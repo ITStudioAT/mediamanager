@@ -11,12 +11,15 @@
             </v-col>
         </v-row>
 
+        <!-- FILEUPLOAD -->
+
         <v-row class="my-4" no-gutters v-if="is_loading == 0">
             <v-col>
                 <FileUpload :path="current_folder?.path" @fileUploadFinished="onFileUploadFinished" />
             </v-col>
         </v-row>
 
+        <!-- FOLDER-UP -->
         <v-row no-gutters class="my-4" v-if="parent_folders.length > 0 && is_loading == 0">
             <v-col class="d-flex flex-row flex-wrap align-center ga-2">
                 <FolderUp :parent="parent" v-for="(parent, i) in parent_folders" :is_current="parent == current_folder"
@@ -24,12 +27,15 @@
             </v-col>
         </v-row>
 
+        <!-- FOLDERS -->
         <v-row no-gutters class="my-4" v-if="is_loading == 0">
             <v-col class="d-flex flex-row align-center ga-2 flex-wrap">
                 <Folder :folder="folder" v-for="(folder, i) in folders" @click="onFolder(folder)" />
             </v-col>
         </v-row>
 
+
+        <!-- ACTION-BUTTONS -->
         <v-row no-gutters class="my-4" v-if="is_loading == 0">
             <v-col class="d-flex flex-row flex-wrap align-center ga-2">
                 <v-btn color="secondary" v-if="selected_files.length < files.length" @click="onSelectAll"><v-icon
@@ -47,17 +53,23 @@
 
             </v-col>
         </v-row>
+
+
         <v-row no-gutters class="my-4">
+            <!-- FILE-LIST -->
             <ColBox :title="current_folder?.name" :subtitle="files.length + ' Dateien'"
                 color="var(--mm-bg-color-folder)" icon="mdi-file">
                 <div class="pt-1">
                     <v-list v-model:selected="selected_files" select-strategy="classic" :disabled="is_loading > 0">
-                        <v-list-item v-for="(file, i) in files" :value="file.name">
+                        <v-list-item v-for="(file, i) in files" :value="file.name" :key="i">
                             <File :file="file" />
                         </v-list-item>
                     </v-list>
                 </div>
             </ColBox>
+
+
+            <!-- PREVIEW -->
             <v-col>
                 <v-card tile flat :loading="is_loading_preview > 0">
                     <v-card-text class="d-flex flex-row align-center justify-center" style="min-height: 300px;"
@@ -71,15 +83,12 @@
             </v-col>
         </v-row>
 
-
-
-
     </v-container>
 
 </template>
 
-<script>
 
+<script>
 
 import { mapWritableState } from "pinia";
 import { useMediamanagerStore } from "../stores/MediamanagerStore";
@@ -146,6 +155,9 @@ export default {
         },
 
         onFolderUp(parent) {
+
+            this.selected_files = [];
+            this.preview_files = [];
             const found = this.parent_folders.find((item) => item.path == parent.path);
             const index = this.parent_folders.findIndex(item => item.path === parent.path);
             if (index !== -1) {
@@ -154,8 +166,6 @@ export default {
 
             if (this.parent_folders.length >= 1) { this.current_folder = this.parent_folders[this.parent_folders.length - 1]; } else { this.current_folder = null; }
 
-            this.selected_files = [];
-            this.preview_files = [];
             this.mediamanagerStore.folderStructure(this.current_folder?.path);
             this.mediamanagerStore.createPreview(this.current_folder?.path);
         },

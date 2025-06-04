@@ -149,4 +149,10 @@ class MediamanagerController extends Controller
         $mediamanagerService = new MediaManagerService();
         $mediamanagerService->destroyFiles($path, $files);
     }
+
+    public function download(Request $request)
+    {
+
+        return response()->download(public_path($request->query('file')), basename($request->query('file')));
+    }
 }

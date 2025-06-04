@@ -146,7 +146,11 @@ class MediaManagerService
                 if (! file_exists($save_path)) {
                     $image = Image::useImageDriver(ImageDriver::Gd)->loadFile(public_path($file['path']))->height(150)->save($save_path);
                 }
-
+                if ($path == '') {
+                    $original_path = config('mediamanager.path') . '/' . $file['name'];
+                } else {
+                    $original_path = $path . '/' . $file['name'];
+                }
                 $relative_path = config('mediamanager.path') . Str::after($save_path, config('mediamanager.path'));
 
                 $thumb_file = new \Symfony\Component\HttpFoundation\File\File($save_path);
@@ -157,6 +161,7 @@ class MediaManagerService
                     'type' => 'file',
                     'name' => $thumb_file->getFilename(),
                     'path' => $relative_path,
+                    'original_path' => $original_path,
                     'size' => $thumb_file->getSize(),
                     'modified' => Carbon::createFromTimestamp($thumb_file->getMTime())->toDateTimeString(),
                     'extension' => strtolower($thumb_file->getExtension()),
@@ -185,49 +190,21 @@ class MediaManagerService
 
     public function uploadPatch($request, $path = '', $new_name = null, $fit = null)
     {
-        // Parameter:
-        // upload_path, Unterverzeichnis in storage/app/public, wenn nicht vorhanden wird es erzeugt
-        // $new_name, Filename. Wenn nicht angegeben wird das Original verwendet
 
         $part_name = 'temp.part';
         $filename = strtolower($request->header('Upload-Name'));
-        /*
-        $part_name = $filename . ".part";
-        if (file_exists(public_path($path . '/' . 'temp.part'))) rename(public_path($path . '/' . 'temp.part'), public_path($path . '/' . $part_name));
-        */
-
         $offset = (int) $request->header('Upload-Offset');
 
         $target = public_path("$path/$part_name");
-        //info($part_name);
-        /*
-        $currentSize = file_exists($target) ? filesize($target) : 0;
-
-        info("currentSize: " . $currentSize);
-        info("offset: " . $offset);
-
-        if ($currentSize !== $offset) {
-            return response('Wrong offset', 409);
-        }
-*/
 
         // Chunk anhängen
         file_put_contents($target, $request->getContent(), FILE_APPEND);
 
         $newSize = filesize($target);
         $expectedSize = (int) $request->header('Upload-Length');
-        /*
-        info("newSize: " . $newSize);
-        info("expectedSize: " . $expectedSize);
-*/
 
         // Wenn Upload fertig
         if ($expectedSize && $newSize === $expectedSize) {
-            /*
-            info("OK!");
-            info("expectedSize: " . $expectedSize);
-            info("newSize: " . $newSize);
-            */
 
             $ext = pathinfo($filename, PATHINFO_EXTENSION);
             $name = pathinfo($filename, PATHINFO_FILENAME);
@@ -245,11 +222,6 @@ class MediaManagerService
             if (! rename($target, $finalPath)) {
                 info("Rename failed: $target → $finalPath");
             }
-
-            /*
-            info("path: " . $path);
-            info("finalName: " . $finalName);
-            */
 
             $fullPath = public_path($path . '/' . $finalName);
 

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Itstudioat\Mediamanager\src\Http\Controllers\MediamanagerController;
 
+
 // Globales Throttle
 Route::prefix('api/mediamanager')->middleware(['web', 'throttle:global', 'throttle:api'])->group(function () {
     Route::get('/folder_structure',  [MediamanagerController::class, 'folderStructure']);
@@ -13,8 +14,8 @@ Route::prefix('api/mediamanager')->middleware(['web', 'throttle:global', 'thrott
 */
     Route::post('/upload_filepond',  [MediamanagerController::class, 'uploadPost']);
     Route::patch('/upload_filepond',  [MediamanagerController::class, 'uploadPatch']);
-    Route::delete('/upload_filepond', [MediaController::class, 'uploadDelete']);
-    Route::get('/upload_filepond', [MediaController::class, 'uploadGet']);
+    Route::delete('/upload_filepond', [MediamanagerController::class, 'uploadDelete']);
+    Route::get('/upload_filepond', [MediamanagerController::class, 'uploadGet']);
 
 
     Route::post('/destroy_files',  [MediamanagerController::class, 'destroyFiles']);
