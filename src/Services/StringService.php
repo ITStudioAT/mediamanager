@@ -2,6 +2,8 @@
 
 namespace Itstudioat\Mediamanager\src\Services;
 
+use Illuminate\Support\Str;
+
 class StringService
 {
     public function sanitizeFilename($filename)

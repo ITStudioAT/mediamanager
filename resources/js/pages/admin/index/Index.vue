@@ -102,7 +102,7 @@
                     <v-form ref="form" v-model="is_valid">
                         <v-row no-gutters>
                             <v-col cols="12">
-                                <v-text-field v-model="data.filename" label="Dateiname"
+                                <v-text-field autofocus v-model="data.filename" label="Dateiname"
                                     :rules="[required(), maxLength(255)]" />
                             </v-col>
                         </v-row>
@@ -119,9 +119,6 @@
                     </v-form>
                 </v-card-text>
             </v-card>
-            <div class="bg-white">
-                {{ data }}
-            </div>
         </v-dialog>
 
     </v-container>
@@ -188,7 +185,13 @@ export default {
         },
 
         async onSaveFilename(data) {
+            this.is_valid = false; await this.$refs.form.validate(); if (!this.is_valid) return;
+            this.is_rename = false;
             await this.mediamanagerStore.saveFilename(data);
+            this.selected_files = [];
+            this.preview_files = [];
+            this.mediamanagerStore.folderStructure(this.current_folder?.path);
+            this.mediamanagerStore.createPreview(this.current_folder?.path);
         },
 
         async destroyFiles() {

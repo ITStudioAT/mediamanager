@@ -158,7 +158,8 @@ class MediamanagerController extends Controller
 
     public function saveFilename(SaveFilenameRequest $request)
     {
-        $validated = $request->validated();
-        info($validated);
+        $validated = $request->validated()['data'];
+        $mediamanagerService = new MediaManagerService();
+        $mediamanagerService->rename($validated['path'], $validated['path'], $validated['current_filename'], $validated['filename'] . '.' . $validated['extension']);
     }
 }

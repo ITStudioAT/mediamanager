@@ -286,4 +286,31 @@ class MediaManagerService
             }
         }
     }
+
+    public function rename($path, $new_path, $current_filename, $new_filename)
+    {
+        if (! $path || $path == 'NULL') {
+            $path = config('mediamanager.path');
+        }
+
+        if (! $new_path || $path == 'NULL') {
+            $new_path = config('mediamanager.path');
+        }
+
+        $stringService = new StringService();
+        $new_filename = $stringService->sanitizeFilename($new_filename);
+
+        $from = public_path($path . '/' . $current_filename);
+        $to = public_path($new_path . '/' . $new_filename);
+
+        $from_thumbs = public_path($path . '/_thumbs/' . $current_filename);
+        $to_thumbs = public_path($new_path . '/_thumbs/' . $new_filename);
+
+        if (file_exists($from)) {
+            rename($from, $to);
+        }
+        if (file_exists($from_thumbs)) {
+            rename($from_thumbs, $to_thumbs);
+        }
+    }
 }

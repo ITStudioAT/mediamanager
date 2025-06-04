@@ -23,8 +23,8 @@ class SaveFilenameRequest extends FormRequest
     {
         return [
             'data.path' => ['nullable', 'string'],
-            'data.current_filename' => ['required', 'string', 'regex:/^[A-Za-z0-9_\-\.]+$/'],
-            'data.filename' => ['required', 'string', 'regex:/^[A-Za-z0-9_\-\.]+$/'],
+            'data.current_filename' => ['required', 'string'],
+            'data.filename' => ['required', 'string'],
             'data.extension' => ['required', 'string'],
         ];
     }
