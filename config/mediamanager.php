@@ -2,6 +2,6 @@
 
 // config for Itstudioat/Mediamanager
 return [
-    'version' => '0.0.2',
+    'version' => '1.0.0',
     'path' => '/storage/media'
 ];

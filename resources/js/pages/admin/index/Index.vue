@@ -29,7 +29,9 @@
 
         <!-- FOLDERS -->
         <v-row no-gutters class="my-4" v-if="is_loading == 0">
-            <v-col class="d-flex flex-row align-center ga-2 flex-wrap">
+            <v-col class="d-flex flex-row align-start ga-2 flex-wrap">
+                <NewFolder @onFolder="createFolder" />
+
                 <Folder :folder="folder" v-for="(folder, i) in folders" @onFolder="onFolder(folder)"
                     @onDestroyFolder="onDestroyFolder(folder)" />
             </v-col>
@@ -67,11 +69,15 @@
             <ColBox :title="current_folder?.name" :subtitle="files.length + ' Dateien'"
                 color="var(--mm-bg-color-folder)" icon="mdi-file">
                 <div class="pt-1">
-                    <v-list v-model:selected="selected_files" select-strategy="classic" :disabled="is_loading > 0">
+                    <v-list v-model:selected="selected_files" select-strategy="classic" :disabled="is_loading > 0"
+                        v-if="files.length > 0">
                         <v-list-item v-for="(file, i) in files" :value="file.name" :key="i">
                             <File :file="file" />
                         </v-list-item>
                     </v-list>
+                    <div v-if="files.length == 0">
+                        LEER
+                    </div>
                 </div>
             </ColBox>
 
@@ -90,14 +96,14 @@
             </v-col>
         </v-row>
 
-        <!-- RENAME -->
+        <!-- RENAME FILE -->
         <v-dialog v-model="is_rename" persistent transition="dialog-bottom-transition" max-width="500">
             <v-card tile flat color="primary">
                 <v-card-title>
                     Umbenennen
                 </v-card-title>
                 <v-card-text class="bg-secondary">
-                    <v-form ref="form" v-model="is_valid">
+                    <v-form ref="form" v-model="is_valid" @submit.prevent="onSaveFilename(data)">
                         <v-row no-gutters>
                             <v-col cols="12">
                                 <v-text-field autofocus v-model="data.filename" label="Dateiname"
@@ -119,6 +125,37 @@
             </v-card>
         </v-dialog>
 
+        <!-- CREATE FOLDER -->
+        <v-dialog v-model="is_create_folder" persistent transition="dialog-bottom-transition" max-width="500">
+            <v-card tile flat color="primary">
+                <v-card-title>
+                    Neuer Ordner
+                </v-card-title>
+                <v-card-text class="bg-secondary">
+                    <v-form ref="form_folder" v-model="is_valid" @submit.prevent="onSaveFolder(data)">
+                        <v-row no-gutters>
+                            <v-col cols="12">
+                                <v-text-field autofocus v-model="data.name" label="Name"
+                                    :rules="[required(), maxLength(255)]" />
+                            </v-col>
+                        </v-row>
+                        <v-row no-gutters class="mt-4">
+                            <v-col cols="6">
+                                <v-btn block flat tile text="Abbruch" color="error" prepend-icon="mdi-close"
+                                    @click="is_create_folder = false" />
+                            </v-col>
+                            <v-col cols="6">
+                                <v-btn block flat tile text="Speichern" color="success" prepend-icon="mdi-content-save"
+                                    @click="onSaveFolder(data)" />
+                            </v-col>
+                        </v-row>
+                    </v-form>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
+
+        <Notification :notification="notification" />
+
     </v-container>
 
 </template>
@@ -131,20 +168,23 @@ import { useMediamanagerStore } from "../../../stores/MediamanagerStore";
 import ItsMenuButton from "../components/ItsMenuButton.vue";
 import ColBox from "../components/ColBox.vue";
 import Folder from "../components/Folder.vue";
+import NewFolder from "../components/NewFolder.vue";
 import FolderUp from "../components/FolderUp.vue";
 import File from "../components/File.vue";
 import PreviewItems from "../components/PreviewItems.vue";
 import FileUpload from "../components/FileUpload.vue";
+import Notification from "../components/Notification.vue";
 export default {
 
     setup() { return useValidationRulesSetup(); },
 
-    components: { ItsMenuButton, ColBox, Folder, File, FolderUp, PreviewItems, FileUpload },
+    components: { ItsMenuButton, ColBox, Folder, File, FolderUp, PreviewItems, FileUpload, NewFolder, Notification },
 
     async beforeMount() {
         this.mediamanagerStore = useMediamanagerStore();
         await this.mediamanagerStore.folderStructure();
         this.mediamanagerStore.createPreview();
+
     },
 
 
@@ -157,13 +197,14 @@ export default {
             active_element: 'home',
             delete_level: 0,
             is_rename: false,
+            is_create_folder: false,
             data: {},
             is_valid: false,
         };
     },
 
     computed: {
-        ...mapWritableState(useMediamanagerStore, ['folders', 'files', 'current_folder', 'parent_folders', 'preview_files', 'is_loading_preview', 'is_loading', 'selected_files']),
+        ...mapWritableState(useMediamanagerStore, ['folders', 'files', 'current_folder', 'parent_folders', 'preview_files', 'is_loading_preview', 'is_loading', 'selected_files', 'notification']),
     },
 
     methods: {
@@ -253,6 +294,26 @@ export default {
             this.mediamanagerStore.folderStructure(folder?.path);
             this.mediamanagerStore.createPreview(folder?.path);
         },
+
+
+        createFolder() {
+            this.data = {};
+            this.is_create_folder = true;
+        },
+
+
+        async onSaveFolder(data) {
+            this.is_valid = false; await this.$refs.form_folder.validate(); if (!this.is_valid) return;
+            this.is_create_folder = false;
+
+            this.selected_files = [];
+            this.preview_files = [];
+            const path = this.current_folder?.path ? this.current_folder?.path : '';
+            this.mediamanagerStore.createFolder(path, data.name);
+            this.mediamanagerStore.folderStructure(this.current_folder?.path);
+            this.mediamanagerStore.createPreview(this.current_folder?.path);
+        },
+
         activate(element) {
             console.log(element);
             if (this.active_element == element) {

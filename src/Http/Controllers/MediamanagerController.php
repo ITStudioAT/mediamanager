@@ -178,7 +178,6 @@ class MediamanagerController extends Controller
 
     public function destroyFolder(Request $request)
     {
-
         $path = $request->path;
 
         if (! $path || $path == 'NULL') {
@@ -187,5 +186,23 @@ class MediamanagerController extends Controller
 
         $mediamanagerService = new MediaManagerService();
         $mediamanagerService->destroyFolder($path);
+    }
+
+    public function createFolder(Request $request)
+    {
+
+        $path = $request->path;
+        $name = $request->name;
+
+        if (! $path || $path == 'NULL') {
+            $path = config('mediamanager.path');
+        }
+
+        $folder = public_path($path . '/' . $name);
+        info($folder);
+
+        if (! is_dir($folder)) {
+            mkdir($folder, 0755, true);
+        }
     }
 }

@@ -12,6 +12,13 @@ export const useMediamanagerStore = defineStore("MMMediamanagerStore", {
             files: [],
             preview_files: [],
             selected_files: [],
+            notification: {
+                show: false,
+                message: '',
+                status: null,
+                type: '',
+                timeout: 3000,
+            }
 
 
         }
@@ -25,7 +32,7 @@ export const useMediamanagerStore = defineStore("MMMediamanagerStore", {
             try {
                 const response = await axios.post("/api/mediamanager/save_filename", { data });
             } catch (error) {
-                this.redirect(error.response.status, error.response.data.message, 'error');
+                this.pushError(error);
             } finally {
                 this.is_loading--;
             }
@@ -37,7 +44,7 @@ export const useMediamanagerStore = defineStore("MMMediamanagerStore", {
 
                 const response = await axios.post("/api/mediamanager/destroy_files", { files, path });
             } catch (error) {
-                this.redirect(error.response.status, error.response.data.message, 'error');
+                this.pushError(error);
             } finally {
                 this.is_loading--;
             }
@@ -45,12 +52,24 @@ export const useMediamanagerStore = defineStore("MMMediamanagerStore", {
 
         async destroyFolder(path) {
             this.is_loading++;
-            console.log(path);
             try {
 
                 const response = await axios.post("/api/mediamanager/destroy_folder", { path });
             } catch (error) {
-                this.redirect(error.response.status, error.response.data.message, 'error');
+                this.pushError(error);
+            } finally {
+                this.is_loading--;
+            }
+        },
+
+
+        async createFolder(path, name) {
+            this.is_loading++;
+            console.log(path);
+            try {
+                const response = await axios.post("/api/mediamanager/create_folder", { path, name });
+            } catch (error) {
+                this.pushError(error);
             } finally {
                 this.is_loading--;
             }
@@ -65,7 +84,7 @@ export const useMediamanagerStore = defineStore("MMMediamanagerStore", {
                 this.folders = response.data?.folders;
                 this.files = response.data?.files;
             } catch (error) {
-                this.redirect(error.response.status, error.response.data.message, 'error');
+                this.pushError(error);
             } finally {
                 this.is_loading--;
             }
@@ -79,11 +98,18 @@ export const useMediamanagerStore = defineStore("MMMediamanagerStore", {
                 const response = await axios.get("/api/mediamanager/create_preview", { params: { path } });
                 this.preview_files = response.data;
             } catch (error) {
-                this.redirect(error.response.status, error.response.data.message, 'error');
+                this.pushError(error);
             } finally {
                 this.is_loading_preview--;
             }
         },
+
+        pushError(error) {
+            this.notification.message = error.response.data.message;
+            this.notification.status = error.response.status;
+            this.notification.type = "error";
+            this.notification.show = true;
+        }
 
 
 
