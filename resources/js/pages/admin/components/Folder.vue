@@ -8,7 +8,7 @@
                 <div>{{ folder.folders_count }} Ord., {{ folder.files_count }} Dat.</div>
             </v-card-text>
         </v-card>
-        <div class="d-flex flex-row flex-wrap align-center ga-1">
+        <div class="d-flex flex-row flex-wrap align-center ga-1" v-if="!noActions">
             <!-- Download -->
             <v-btn size="small" :href="'/mediamanager/download_folder?folder=' + folder.path" target="_blank"><v-icon
                     icon="mdi-download" /></v-btn>
@@ -23,6 +23,7 @@
                     icon="mdi-delete" /></v-btn>
         </div>
     </div>
+    
 
 </template>
 
@@ -30,7 +31,7 @@
 <script>
 export default {
     emits: ['onFolder'],
-    props: ['folder'],
+    props: ['folder', 'noActions'],
 
     data() {
         return {

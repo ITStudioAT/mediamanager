@@ -91,7 +91,35 @@ npm install filepond-plugin-image-preview
 ```
 
 
+
 ## Usage
+
+Call the MadiaManager in this example with the path: hpm/admin/mm.
+
+### Selecting a file with the MediaManager
+Import the Component Select.vue
+```bash
+import Select from "../select/Select.vue";
+
+components: { Select },
+```
+
+Call this component, maybe with something like this:
+```bash
+ <Select v-if="is_select" @abort="selectAbort" @takeIt="selectTakeIt" />
+```
+
+You will get the event __@abort__, if the user press abort or __@takeIt__ if the user selects a file.
+The selectTakeIt looks like something like this:
+```bash
+        selectTakeIt(data) {
+            console.log(data); // shows path and filename
+            this.is_select = false;
+        },
+```
+
+
+
 
 
 ## Testing

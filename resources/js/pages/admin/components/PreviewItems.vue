@@ -13,7 +13,7 @@
                         {{ file.name }}
                     </div>
                 </div>
-                <div class="d-flex flex-row flex-wrap align-center ga-1 py-1">
+                <div class="d-flex flex-row flex-wrap align-center ga-1 py-1" v-if="!noActions">
                     <v-btn size="small" @click="showFullImage(file)"><v-icon icon="mdi-magnify-expand" /></v-btn>
                     <v-btn size="small" :href="'/mediamanager/download?file=' + file.original_path"
                         target="_blank"><v-icon icon="mdi-download" /></v-btn>
@@ -39,7 +39,7 @@ import { mapWritableState } from "pinia";
 import { useMediamanagerStore } from "../../../stores/MediamanagerStore";
 
 export default {
-    props: ['preview_files'],
+    props: ['preview_files', 'noActions', 'selectStrategy'],
 
     async beforeMount() {
         this.mediamanagerStore = useMediamanagerStore();
@@ -66,13 +66,23 @@ export default {
         },
 
         onClick(file) {
-            if (this.selected_files.includes(file.name)) {
-                const index = this.selected_files.indexOf(file.name);
-                if (index !== -1) {
-                    this.selected_files.splice(index, 1);
+            if (this.selectStrategy == "single") {
+                if (this.selected_files.includes(file.name)) {
+                    this.selected_files = [];
+                } else {
+                    this.selected_files = [];
+                    this.selected_files.push(file.name);
                 }
-            } else {
-                this.selected_files.push(file.name);
+            }
+            else {
+                if (this.selected_files.includes(file.name)) {
+                    const index = this.selected_files.indexOf(file.name);
+                    if (index !== -1) {
+                        this.selected_files.splice(index, 1);
+                    }
+                } else {
+                    this.selected_files.push(file.name);
+                }
             }
 
         },

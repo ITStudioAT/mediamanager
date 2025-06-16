@@ -65,7 +65,6 @@ export const useMediamanagerStore = defineStore("MMMediamanagerStore", {
 
         async createFolder(path, name) {
             this.is_loading++;
-            console.log(path);
             try {
                 const response = await axios.post("/api/mediamanager/create_folder", { path, name });
             } catch (error) {
@@ -81,6 +80,7 @@ export const useMediamanagerStore = defineStore("MMMediamanagerStore", {
             try {
 
                 const response = await axios.get("/api/mediamanager/folder_structure", { params: { path } });
+                this.folders = []; this.files = [];
                 this.folders = response.data?.folders;
                 this.files = response.data?.files;
             } catch (error) {

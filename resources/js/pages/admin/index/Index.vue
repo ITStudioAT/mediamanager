@@ -1,17 +1,17 @@
 <template>
 
     <v-container fluid class="ma-0 w-100 pa-2">
-        <!-- MENÜ 
+        <!-- MENÜ -->
         <v-row class="d-flex flex-row ga-2 mt-0 w-100 my-4" no-gutters>
             <v-col cols="12" class="d-flex flex-row flex-wrap align-center ga-2">
-                <its-menu-button title="Homepage" icon="mdi-home"
-                    :color="active_element === 'home' ? 'mm-bg-primary text-white' : 'mm-bg-secondary'"
-                    @click="activate('home')" />
-
+                <its-menu-button color="mm-bg-secondary" title="Auswahl" icon="mdi-image-size-select-actual"
+                    @click="select" />
             </v-col>
         </v-row>
-        
-    -->
+
+        <Select v-if="is_select" @abort="selectAbort" @takeIt="selectTakeIt" />
+
+
 
         <!-- FILEUPLOAD -->
 
@@ -176,11 +176,12 @@ import File from "../components/File.vue";
 import PreviewItems from "../components/PreviewItems.vue";
 import FileUpload from "../components/FileUpload.vue";
 import Notification from "../components/Notification.vue";
+import Select from "../select/Select.vue";
 export default {
 
     setup() { return useValidationRulesSetup(); },
 
-    components: { ItsMenuButton, ColBox, Folder, File, FolderUp, PreviewItems, FileUpload, NewFolder, Notification },
+    components: { ItsMenuButton, ColBox, Folder, File, FolderUp, PreviewItems, FileUpload, NewFolder, Notification, Select },
 
     async beforeMount() {
         this.mediamanagerStore = useMediamanagerStore();
@@ -202,6 +203,7 @@ export default {
             is_create_folder: false,
             data: {},
             is_valid: false,
+            is_select: true,
         };
     },
 
@@ -210,6 +212,19 @@ export default {
     },
 
     methods: {
+
+        select() {
+            this.is_select = true;
+
+        },
+        selectAbort() {
+            this.is_select = false;
+        },
+
+        selectTakeIt(data) {
+            console.log(data);
+            this.is_select = false;
+        },
 
         rename() {
             const fullName = this.selected_files[0];

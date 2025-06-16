@@ -8,4 +8,13 @@ export default [
             title: 'Media Manager',
         },
     },
+
+    {
+        path: '/hpm/admin/mm/select',
+        name: 'media.select',
+        component: () => import('../../../../vendor/itstudioat/mediamanager/resources/js/pages/admin/select/Select.vue'), // or actual path
+        meta: {
+            title: 'Media Manager Selection',
+        },
+    },
 ]
