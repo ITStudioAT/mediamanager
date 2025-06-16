@@ -1,7 +1,7 @@
 <template>
 
     <v-container fluid class="ma-0 w-100 pa-2">
-        <!-- MENÜ -->
+        <!-- MENÜ 
         <v-row class="d-flex flex-row ga-2 mt-0 w-100 my-4" no-gutters>
             <v-col cols="12" class="d-flex flex-row flex-wrap align-center ga-2">
                 <its-menu-button title="Homepage" icon="mdi-home"
@@ -10,6 +10,8 @@
 
             </v-col>
         </v-row>
+        
+    -->
 
         <!-- FILEUPLOAD -->
 

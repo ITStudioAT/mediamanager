@@ -15,13 +15,27 @@ You can install the package via composer:
 composer require itstudioat/mediamanager
 ```
 
-Now publish the files to the folder vendor/mediamanager:
-
+Now publish the files to the folder vendor/mediamanager.
+Also publish the config-file
 ```bash
-php artisan vendor:publish --tag=mediamanager-all
+php artisan vendor:publish --tag="mediamanager-all"
+php artisan vendor:publish --tag="mediamanager-config"
 ```
 
-Check in vendor/mediamanager/routes/routes.js the correct routes
+In the config-file you may adapt the needed_role,
+which is the spatie-role, that the user must have to use the mediamanager.
+If it is empty, no role is needed.
+
+```bash
+return [
+    ...
+    'needed_role' => 'mediamanager_admin'
+    ...
+];
+```
+
+
+Check in resources/vendor/mediamanager/routes/routes.js the correct routes
 ```bash
     {
         path: '/hpm/admin/mm',
