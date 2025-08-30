@@ -18,7 +18,6 @@ composer require itstudioat/mediamanager
 Now publish the files to the folder vendor/mediamanager.
 Also publish the config-file
 ```bash
-php artisan vendor:publish --tag="mediamanager-all"
 php artisan vendor:publish --tag="mediamanager-config"
 ```
 
@@ -34,26 +33,42 @@ return [
 ];
 ```
 
+Include this in composer.json:
+```
+    "autoload": {
+        "psr-4": {
+            ...
+            "Itstudioat\\Mediamanager\\": "vendor/itstudioat/mediamanager/"
+        }
+    },
+```
 
-Check in resources/vendor/mediamanager/routes/routes.js the correct routes
+
+The paths to the components (/vendor/itstudioat/mediamanager/routes/routes.js) should be correct by default
 ```bash
     {
         path: '/hpm/admin/mm',
         name: 'media.index',
-        component: () => import('../../../../vendor/itstudioat/mediamanager/resources/js/pages/admin/index/Index.vue'), // or actual path
+        component: () => import('../js/pages/admin/index/Index.vue'), // or actual path
         meta: {
             title: 'Media Manager',
         },
-    },
+    {
+        path: '/admin/mm/select',
+        name: 'media.select',
+        component: () => import('../js/pages/admin/select/Select.vue'), // or actual path
+        meta: {
+            title: 'Media Manager Selection',
+        },
 ```
 
-Include the mediamanager-routes dynamically:
+In the admin.js (or whereever) include the mediamanager-routes dynamically:
 ```bash
 ...
-import mediaRoutes from '../../mediamanager/routes/routes'
+import mediaRoutes from '../../vendor/itstudioat/mediamanager/resources/routes/routes'
 ...
 const routes = [
-    { path: '/hpm/admin', component: Index },
+    { path: '/admin', component: Index },
     ...mediaRoutes,
 ];
 
@@ -72,7 +87,7 @@ app.mount('#app');
 ```
 
 
-## Needed Packages
+## Needed Packages (installed by default)
 ### getID3() by James Heinrich
 ```bash
 composer require james-heinrich/getid3
