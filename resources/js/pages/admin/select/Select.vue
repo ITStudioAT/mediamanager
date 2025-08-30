@@ -6,7 +6,7 @@
                 <v-col cols="12" class="d-flex flex-row flex-wrap align-center ga-2">
                     <its-menu-button color="mm-bg-error" title="Abbruch" icon="mdi-cancel" @click="abort" />
 
-                    <its-menu-button color="mm-bg-success" title="Nehmen" icon="mdi-check" to="/hpm/admin/mm"
+                    <its-menu-button color="mm-bg-success" title="Nehmen" icon="mdi-check"
                         v-if="selected_files.length > 0" @click="takeIt" />
 
 

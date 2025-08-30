@@ -203,7 +203,7 @@ export default {
             is_create_folder: false,
             data: {},
             is_valid: false,
-            is_select: true,
+            is_select: false,
         };
     },
 
