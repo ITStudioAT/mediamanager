@@ -34,7 +34,7 @@ return [
 ```
 
 Include this in composer.json:
-```
+```bash
     "autoload": {
         "psr-4": {
             ...
@@ -74,17 +74,44 @@ const routes = [
 
 ```
 
-Adapt your app.js-file and include the mediamanager.css and mediamanager.js-files:
+Import the css-file into your resources/css/app.js (or admin.js), then you can use classes like *.mm-bg-folder*
 ```bash
-...
-import '../../../mediamanager/css/mediamanager.css';
-...
-import mediamanager from "../../../mediamanager/plugins/mediamanager.js";
-...
-const pinia = createPinia();
-const app = createApp(App).use(vuetify).use(mediamanager).use(pinia).use(router);
-app.mount('#app');
+    ...
+    import '../../../vendor/itstudioat/mediamanager/resources/css/mediamanager.css';
+    ...
 ```
+
+Import the themes-file into your resources/plugins/admin.js
+```bash
+    ...
+    import {
+    mediamanagerLightTheme,
+    mediamanagerDarkTheme,
+    } from '../../vendor/itstudioat/mediamanager/resources/plugins/mediamanager.js'
+    ...
+
+
+const lightTheme = {
+    dark: false,
+    colors: {
+        ...
+        // For errors, alerts
+        error: '#E53935',           // red.darken1
+
+        ...mediamanagerLightTheme.colors,
+    },
+
+
+const darkTheme = {
+    dark: true,
+    colors: {
+        ...
+        // For errors, alerts
+        error: '#EF5350',           // red.lighten2
+        ...mediamanagerDarkTheme.colors,
+    },
+```
+
 
 
 ## Needed Packages (installed by default)
