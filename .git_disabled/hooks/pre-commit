@@ -1,0 +1,14 @@
+#!/bin/sh
+echo "⏳ Running PHP-CS-Fixer..."
+
+PHP_CS_FIXER_IGNORE_ENV=1 ./vendor/bin/php-cs-fixer fix
+
+if [ $? -ne 0 ]; then
+  echo "❌ PHP-CS-Fixer failed"
+  exit 1
+fi
+
+# Stage all files again after fixer runs
+git add -u
+
+echo "✅ PHP-CS-Fixer done."
