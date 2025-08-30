@@ -1,6 +1,6 @@
 <template>
 
-    <v-card class="mm-text-folder mm-border-folder" width="300">
+    <v-card class="mm-text-folder mm-border-folder">
         <v-card-text>
             <file-pond class="w-100" name="file" ref="pond" label-idle="<strong>⬆️ Dateien oder Klick ⬆️</strong>"
                 allowReplace chunkForce="true" allowRemove=false allowRevert="false" allow-multiple="true"

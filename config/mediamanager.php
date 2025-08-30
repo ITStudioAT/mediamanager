@@ -2,7 +2,7 @@
 
 // config for Itstudioat/Mediamanager
 return [
-    'version' => '1.0.5',
+    'version' => '1.0.6',
     'path' => '/storage/media',
     'needed_role' => 'mediamanager_admin'
 ];

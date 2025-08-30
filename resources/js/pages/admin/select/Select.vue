@@ -1,6 +1,6 @@
 <template>
-    <v-dialog persistent v-model="is_visible" max-width="1280" class="bg-primary">
-        <v-container fluid class="ma-0 w-100 pa-2">
+    <v-dialog persistent v-model="is_visible" max-width="1280" class="mm-bg-secondary" opacity=0.8>
+        <v-container fluid class="ma-0 pa-2 mm-bg-primary">
             <!-- MENÜ -->
             <v-row class="d-flex flex-row ga-2 mt-0 w-100 my-4" no-gutters>
                 <v-col cols="12" class="d-flex flex-row flex-wrap align-center ga-2">
@@ -31,7 +31,7 @@
                 </v-col>
             </v-row>
 
-            <v-row no-gutters class="my-4">
+            <v-row class="my-4">
                 <!-- FILE-LIST -->
                 <ColBox :title="current_folder?.name" :subtitle="files.length + ' Dateien'"
                     color="var(--mm-bg-color-folder)" icon="mdi-file">
@@ -130,7 +130,21 @@ export default {
             this.$emit('takeIt', data);
         },
 
+        onFolderUp(parent) {
 
+            this.selected_files = [];
+            this.preview_files = [];
+            const found = this.parent_folders.find((item) => item.path == parent.path);
+            const index = this.parent_folders.findIndex(item => item.path === parent.path);
+            if (index !== -1) {
+                this.parent_folders.splice(index);
+            }
+
+            if (this.parent_folders.length >= 1) { this.current_folder = this.parent_folders[this.parent_folders.length - 1]; } else { this.current_folder = null; }
+
+            this.mediamanagerStore.folderStructure(this.current_folder?.path);
+            this.mediamanagerStore.createPreview(this.current_folder?.path);
+        },
 
         onFolder(folder) {
             this.parent_folders.push(folder);
